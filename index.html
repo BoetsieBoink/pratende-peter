@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            PRATENDE PETER: Het is Ben, maar beter!
+        </title>
+    </head>
+    <script>
+        var callable = true;
+        var current_speaker = 0; // default to the first speaker in the array
+
+        window.onload = function() {
+            var button = document.getElementById("chatButton");
+            var select = document.getElementById("personSelect");
+            
+            select.addEventListener("change", setCharacter);
+            button.addEventListener("click", praat);
+        };
+        
+        actions = [
+            "no",
+            "yes",
+            "bleh",
+            "laughing"
+        ]
+        speakers = [
+            //name, display name, bg color
+            ["peter", "Pratende Peter", "#9ffcff"],
+            ["floris", "Fluisterende Floris", "#f57242"],
+            ["scott", "Schreeuwende Scott", "#CBBEAC"], // Scattende Scott
+            ["roel", "Roepende Roel", "#547C73"]
+        ]
+        function setCharacter() {
+            var select = document.getElementById("personSelect");
+            var selectedValue = select.value;
+
+            // Find the selected speaker in the speakers array
+            for (var i = 0; i < speakers.length; i++) {
+                if (speakers[i][0] === selectedValue) {
+                    current_speaker = i;
+                    document.body.style.backgroundColor = speakers[i][2]; // Change background color
+                    document.title = speakers[i][1] + ": Het is Ben, maar beter!"; // Change title
+                    document.getElementById("pageTitle").innerText = speakers[i][1].toUpperCase(); // Change page title
+                    document.getElementById("peter").src = "res/imgs/" + speakers[i][0] + "/none.jpg"; // Change image source
+                    document.getElementById("chatButton").innerText = "PRAAT MET " + speakers[i][0].toUpperCase(); // Change button text
+
+                    break;
+                }
+            }
+
+            // window.alert("Hopefully changed to " + current_speaker)
+        }
+        function sound(speaker, soundName) {
+            var path = "res/audio/" + speaker + "/" + soundName + ".mp3"
+            // window.alert("Attempting to load sound from path: " + path);
+            var audio = new Audio(path);
+            audio.play();
+        }
+
+        function praat() {
+            if (!callable) {
+                return; // exit the function if callable is false
+            }
+
+            var randomNumber = Math.floor(Math.random() * 4); // random number between 0 and 3 (inclusive)
+            var speaker_name = speakers[current_speaker][0]
+            var imagePath = "res/imgs/" + speakers[current_speaker][0] + "/" + actions[randomNumber] + ".jpg"; // get the image path from the array
+            var imageElement = document.getElementById("peter"); // select the image element
+            imageElement.src = imagePath; // update the image source
+
+            sound(speaker_name, speaker_name + "-" + actions[randomNumber])
+
+            callable = false; // set callable to false to prevent further clicks
+            disableButton(); // disable the button to prevent further clicks
+
+            // Wait for 2 seconds before resetting the image back to the default
+            setTimeout(function() {
+                callable = true; // set callable back to true to allow further clicks
+                enableButton(); // enable the button again
+                imageElement.src = "res/imgs/" + speakers[current_speaker][0] + "/none.jpg"; // reset the image source to the default
+            }, 1500); // 1500 milliseconds = 1.5 seconds
+        }
+        function disableButton() {
+            var button = document.getElementById("chatButton");
+            button.disabled = true; // disable the button
+            button.style.backgroundColor = "#cccccc"; // change the button color to indicate it's disabled
+            button.style.cursor = "not-allowed"; // change the cursor to indicate it's disabled
+        }
+        function enableButton() {
+            var button = document.getElementById("chatButton");
+            button.disabled = false; // enable the button
+            button.style.backgroundColor = "#4CAF50"; // change the button color back to the original
+            button.style.cursor = "pointer"; // change the cursor back to pointer
+        }
+    </script>
+
+    <body style="background-color: #9ffcff; margin: 0; padding: 0; align-items: center; justify-content: center; display: flex; flex-direction: column; height: 100vh;">
+        <h1 id="pageTitle" style="text-align: center; font-family: Arial, sans-serif">PRATENDE PETER</h1>
+
+        <select id="personSelect" style="margin-top: 5px; margin-bottom: 20px; text-align: center; align-items: center; border-radius: 10px; padding: 10px 20px; font-size: 16px;">
+            <option value="peter">Pratende Peter</option>
+            <option value="floris">Fluisterende Floris</option>
+            <option value="scott">Schizofrenische Scott</option>
+            <option value="roel">Roepende Roel</option>
+        </select>
+
+        <div style="height: 340px; border-width: 5px; border-style: solid; border-color: black;"> <!-- container for image so that the button doesn't move when the image changes -->
+            <img id="peter" src="res/imgs/peter/none.jpg" alt="PRATENDE PETER" style="display: block; margin: 0 auto; width: 100%; height: 100%;">
+        </div>
+
+        <button id="chatButton" style="margin-top: 50px; text-align: center; align-items: center; border-radius: 10px; padding: 10px 20px; font-size: 16px; background-color: #4CAF50; color: white; border: none; cursor: pointer;">
+            PRAAT MET PETER
+        </button>
+    </body>
+</html>
